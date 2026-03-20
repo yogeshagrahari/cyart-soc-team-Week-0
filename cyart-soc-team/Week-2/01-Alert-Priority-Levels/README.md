@@ -1,10 +1,8 @@
-# 🚨 01 — Alert Priority Levels
+# 01 — Alert Priority Levels
 
 > **Goal:** Understand and apply severity/priority levels to incoming SOC alerts using CVSS scoring and asset criticality.
 
----
-
-## 📖 Theory Notes
+##  Theory Notes
 
 ### 1.1 Priority Definitions
 
@@ -132,7 +130,7 @@ INCOMING ALERT
 
 ---
 
-## 🔧 Practical: CVSS Scoring Exercise
+## Practical: CVSS Scoring Exercise
 
 ### How to Use FIRST's CVSS Calculator
 
@@ -140,31 +138,11 @@ INCOMING ALERT
 
 **Step 2:** Fill in the Base Score Metrics
 
-```
-Screenshot Reference:
-┌────────────────────────────────────────────────────────────┐
-│  CVSS v3.1 Calculator — FIRST.org                          │
-│  ─────────────────────────────────────────────────────     │
-│  Attack Vector:    ● Network  ○ Adjacent  ○ Local          │
-│  Attack Complexity: ● Low    ○ High                        │
-│  Privileges Required: ● None  ○ Low  ○ High                │
-│  User Interaction:  ● None   ○ Required                    │
-│  Scope:            ○ Unchanged  ● Changed                  │
-│  Confidentiality:  ○ None  ○ Low  ● High                   │
-│  Integrity:        ○ None  ○ Low  ● High                   │
-│  Availability:     ○ None  ○ Low  ● High                   │
-│                                                            │
-│  BASE SCORE: 10.0  ████████████████████  CRITICAL         │
-│                                                            │
-│  Vector: CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H   │
-└────────────────────────────────────────────────────────────┘
-```
-
 **Step 3:** Document the vector string and score in your tracker.
 
 ---
 
-## 📊 Alert Priority Google Sheets Template
+##  Alert Priority Google Sheets Template
 
 Create this spreadsheet to track and score alerts:
 
@@ -182,7 +160,7 @@ Create this spreadsheet to track and score alerts:
 
 ---
 
-## 📚 Resources
+##  Resources
 
 - [FIRST CVSS v3.1 Guide](https://www.first.org/cvss/v3.1/specification-document)
 - [NIST NVD CVSS Calculator](https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator)
