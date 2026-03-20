@@ -1,33 +1,20 @@
-# 🧪 07 — Evidence Preservation
+# 07 — Evidence Preservation
 
 > **Tools:** Velociraptor · FTK Imager  
 > **Goal:** Collect volatile and non-volatile forensic evidence, hash all artifacts, and maintain chain of custody.
 
 ---
 
-## 📖 Theory: Order of Volatility
+##  Theory: Order of Volatility
 
 ```
 Collect evidence in order of most volatile → least volatile:
 
-┌────────────────────────────────────────────────────────────┐
-│  VOLATILITY ORDER (Most → Least)                           │
-│                                                            │
-│  1. CPU Registers & Cache      → Cleared on power off     │
-│  2. Memory (RAM)               → Lost on reboot           │
-│  3. Network State (connections)→ Changes constantly       │
-│  4. Running Processes          → Changes constantly       │
-│  5. Disk Cache                 → Lost on reboot           │
-│  6. Temp Files                 → May persist              │
-│  7. Disk Storage               → Persists                 │
-│  8. Log Files                  → Persists                 │
-│  9. Backup / Archive           → Long-term persistence    │
-└────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🦅 Section 1: Velociraptor
+##  Section 1: Velociraptor
 
 ### What is Velociraptor?
 
@@ -80,22 +67,7 @@ Get-Service -Name Velociraptor
 ### Velociraptor Dashboard Overview
 
 ```
-Screenshot Reference — Velociraptor GUI:
-┌────────────────────────────────────────────────────────────────┐
-│  🦅 Velociraptor                               [admin ▼]      │
-│  ─────────────────────────────────────────────────────────     │
-│  🖥️ Clients  📋 Hunts  🔍 Notebooks  📊 Dashboard             │
-│  ─────────────────────────────────────────────────────────     │
-│                                                                │
-│  Connected Clients (3)                                         │
-│  ┌────────────────┬──────────────┬────────────┬─────────────┐  │
-│  │ Client ID      │ Hostname     │ OS         │ Last Seen   │  │
-│  ├────────────────┼──────────────┼────────────┼─────────────┤  │
-│  │ C.1a2b3c4d5e   │ prod-db-01   │ Windows 10 │ 11:45 UTC   │  │
-│  │ C.2b3c4d5e6f   │ workstation7 │ Windows 10 │ 11:40 UTC   │  │
-│  │ C.3c4d5e6f7g   │ web-server   │ Ubuntu 22  │ 11:42 UTC   │  │
-│  └────────────────┴──────────────┴────────────┴─────────────┘  │
-└────────────────────────────────────────────────────────────────┘
+
 ```
 
 ---
@@ -117,25 +89,6 @@ ORDER BY Pid
 -- 5678 | 0.0.0.0:80       | 0.0.0.0:0        | LISTEN      | nginx
 ```
 
-```
-Screenshot Reference — VQL netstat results:
-┌────────────────────────────────────────────────────────────────┐
-│  Notebook: Evidence Collection    [Run Query ▶]                │
-│  ─────────────────────────────────────────────────────────     │
-│                                                                │
-│  VQL: SELECT * FROM netstat() WHERE Status='ESTABLISHED'      │
-│                                                                │
-│  Results (3 rows):                                             │
-│  ┌──────┬───────────────────┬────────────────────┬───────────┐ │
-│  │ Pid  │ Laddr             │ Raddr              │ Process   │ │
-│  ├──────┼───────────────────┼────────────────────┼───────────┤ │
-│  │ 1234 │ 10.0.0.25:22      │ 192.168.1.100:56123│ sshd      │ │
-│  │ 5678 │ 10.0.0.25:443     │ 45.33.32.156:54321 │ crypto.exe│ │
-│  │ 9012 │ 10.0.0.25:3306    │ 10.0.0.1:23456     │ mysqld    │ │
-│  └──────┴───────────────────┴────────────────────┴───────────┘ │
-│  [Export CSV]                                                  │
-└────────────────────────────────────────────────────────────────┘
-```
 
 **Save output:**
 ```bash
@@ -209,7 +162,7 @@ LIMIT 100
 
 ---
 
-## 🖼️ Section 2: FTK Imager
+##  Section 2: FTK Imager
 
 ### What is FTK Imager?
 
@@ -221,43 +174,7 @@ FTK Imager is a forensic imaging tool that creates exact bit-for-bit copies of s
 
 **Step 1:** Launch FTK Imager as **Administrator**
 
-```
-Screenshot Reference — FTK Imager Main Window:
-┌────────────────────────────────────────────────────────────────┐
-│  FTK Imager 4.7                                [_][□][✕]      │
-│  ─────────────────────────────────────────────────────────     │
-│  File  View  Mode  Help                                        │
-│  ─────────────────────────────────────────────────────────     │
-│  📁  Evidence Tree     │  📄 File Listing                      │
-│  ─────────────────     │  ─────────────────────────────────    │
-│  [No evidence loaded]  │  [Select an item in Evidence Tree]   │
-│                        │                                       │
-│                        │                                       │
-│                                                                │
-│  Status:  Ready                                                │
-└────────────────────────────────────────────────────────────────┘
-```
-
 **Step 2:** Go to **File → Capture Memory**
-
-```
-Screenshot Reference — Memory Capture Dialog:
-┌────────────────────────────────────────────────────────────────┐
-│  Memory Capture                                     [✕]        │
-│  ─────────────────────────────────────────────────────────     │
-│                                                                │
-│  Destination Path:                                             │
-│  [C:\forensics\                              ] [Browse...]     │
-│                                                                │
-│  Destination Filename:                                         │
-│  [memory_dump_prod-db-01_20250818.mem       ]                 │
-│                                                                │
-│  ☑  Include pagefile                                          │
-│  ☑  Create AD1 file                                           │
-│                                                                │
-│              [Cancel]    [Capture Memory]                     │
-└────────────────────────────────────────────────────────────────┘
-```
 
 **Step 3:** Click **Capture Memory** and wait for completion.
 
@@ -281,32 +198,13 @@ sha256sum /forensics/memory_dump_prod-db-01_20250818.mem
 
 **Step 1:** File → Add Evidence Item → Physical Drive
 
-```
-Screenshot Reference — Add Evidence:
-┌────────────────────────────────────────────────────────────────┐
-│  Select Source                                      [✕]        │
-│  ─────────────────────────────────────────────────────────     │
-│                                                                │
-│  Please select the type of source evidence to process         │
-│                                                                │
-│  ○ Physical Drive    (entire disk)                            │
-│  ● Logical Drive     (single partition)                       │
-│  ○ Image File        (existing .E01/.dd)                      │
-│  ○ Contents of Folder                                         │
-│                                                                │
-│              [Back]  [Next >]  [Cancel]                       │
-└────────────────────────────────────────────────────────────────┘
-```
-
----
-
-## 📋 Chain of Custody Documentation
+##  Chain of Custody Documentation
 
 ```
-══════════════════════════════════════════════════════════════════
+
          DIGITAL EVIDENCE CHAIN OF CUSTODY FORM
          CyArt Security Operations Center
-══════════════════════════════════════════════════════════════════
+
 
 Case Number:        INC-2025-001
 Incident Type:      Ransomware
@@ -317,6 +215,7 @@ Location:           prod-db-01 (10.0.0.25) — Server Room A
 ──────────────────────────────────────────────────────────────────
 EVIDENCE ITEMS:
 ──────────────────────────────────────────────────────────────────
+
 
 Item #1
   Description:    RAM Memory Dump
@@ -378,7 +277,7 @@ INTEGRITY VERIFICATION LOG:
 Verified By:    SOC Analyst-A
 Verified At:    2025-08-18 12:25 UTC
 Method:         sha256sum on all files
-Result:         ✅ All hashes match — evidence integrity confirmed
+Result:          All hashes match — evidence integrity confirmed
 ```
 
 ---
