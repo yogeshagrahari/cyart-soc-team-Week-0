@@ -42,7 +42,7 @@ Analysis Steps:
 
 #### Phase 3: Containment
 
-**Short-term Containment (Immediate):**
+Short-term Containment (Immediate):
 ```bash
 # Isolate compromised Linux host from network
 sudo iptables -I INPUT -j DROP
@@ -63,7 +63,7 @@ sudo iptables -A OUTPUT -d 45.33.32.156 -j DROP
 sudo iptables-save > /etc/iptables/rules.v4
 ```
 
-**Long-term Containment:**
+Long-term Containment:
 ```bash
 # Snapshot the compromised VM before cleanup (VirtualBox)
 VBoxManage snapshot "Compromised-VM" take "pre-eradication-snapshot"
