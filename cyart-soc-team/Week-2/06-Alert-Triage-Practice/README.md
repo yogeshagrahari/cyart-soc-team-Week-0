@@ -5,13 +5,11 @@
 
 ---
 
-## 📋 Alert Triage Workflow
+##  Alert Triage Workflow
 
 ```
 INCOMING ALERT
      │
-     ▼
-
  STEP 1: Read the Alert                                     
    → What is the rule? What triggered it?                   
    → What is the source IP / hostname?                      
@@ -29,13 +27,13 @@ STEP 2: Is this a known false positive pattern?
 
                           │
               -------------------------
-              ▼                       ▼
+               |                      |
       MALICIOUS / SUSPICIOUS     CLEAN / UNKNOWN
               │                       │
-              ▼                       ▼
-       → Open TheHive Ticket    → Monitor, log, escalate
-       → Assign Priority               if pattern repeats
-       → Contain if P1/P2
+                                  
+       Open TheHive Ticket         Monitor, log, escalate
+        Assign Priority               if pattern repeats
+        Contain if P1/P2
 ```
 
 ---
@@ -44,9 +42,9 @@ STEP 2: Is this a known false positive pattern?
 
 ### Accessing Alerts in Wazuh
 
-**Step 1:** Login to Wazuh Dashboard → `https://[wazuh-ip]`
+**Step 1:** Login to Wazuh Dashboard - `https://[wazuh-ip]`
 
-**Step 2:** Navigate to **Security Events** → **Threat Detection**
+**Step 2:** Navigate to **Security Events** - **Threat Detection**
 
 
 ### Viewing a Specific Alert Detail
@@ -177,7 +175,7 @@ python3 otx_check.py
 
 ```
 ALERT TRIAGE LOG
-════════════════════════════════════════════════════════════════
+--------------------------------------------------------
 
 Alert ID:       ALT-004
 Date/Time:      2025-08-18 11:43 UTC
@@ -188,7 +186,7 @@ Target:         prod-db-01:22 (10.0.0.25)
 Analyst:        Analyst-A
 
 TRIAGE STEPS:
-─────────────
+----------------------------------------
 
 Step 1 — False Positive Check:
   Is 192.168.1.100 a known scanner? NO
