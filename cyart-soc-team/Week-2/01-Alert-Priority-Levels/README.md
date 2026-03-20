@@ -1,6 +1,6 @@
 # 01 — Alert Priority Levels
 
-> **Goal:** Understand and apply severity/priority levels to incoming SOC alerts using CVSS scoring and asset criticality.
+> Goal: Understand and apply severity/priority levels to incoming SOC alerts using CVSS scoring and asset criticality.
 
 ##  Theory Notes
 
@@ -17,7 +17,7 @@
 
 ### 1.2 CVSS Scoring System (v3.1)
 
-The **Common Vulnerability Scoring System (CVSS)** is the standard for rating vulnerability severity.
+The Common Vulnerability Scoring System (CVSS)** is the standard for rating vulnerability severity.
 
 #### CVSS v3.1 Score Ranges
 
@@ -134,11 +134,11 @@ INCOMING ALERT
 
 ### How to Use FIRST's CVSS Calculator
 
-**Step 1:** Go to https://www.first.org/cvss/calculator/3.1
+Step 1: Go to https://www.first.org/cvss/calculator/3.1
 
-**Step 2:** Fill in the Base Score Metrics
+Step 2: Fill in the Base Score Metrics
 
-**Step 3:** Document the vector string and score in your tracker.
+Step 3: Document the vector string and score in your tracker.
 
 ---
 
@@ -152,11 +152,11 @@ Create this spreadsheet to track and score alerts:
 | ALT-002 | 2025-08-18 11:45 | Port Scan Detected | 192.168.1.200 | test-vm-03 | Tier 4 | 2.1 | P4-Low | Analyst-B | Closed |
 | ALT-003 | 2025-08-18 12:30 | Unauthorized Admin Login | 10.0.0.55 | ad-dc-01 | Tier 1 | 8.8 | P2-High | Analyst-A | In Progress |
 
-**Google Sheets Formula for Auto-Priority:**
+Google Sheets Formula for Auto-Priority:
 ```
 =IF(F2>=9,"P1-Critical",IF(F2>=7,"P2-High",IF(F2>=4,"P3-Medium","P4-Low")))
 ```
-*(Put in column H, where F = CVSS Score)*
+(Put in column H, where F = CVSS Score)
 
 ---
 
