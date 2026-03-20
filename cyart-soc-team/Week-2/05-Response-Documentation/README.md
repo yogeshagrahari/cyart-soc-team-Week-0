@@ -1,17 +1,17 @@
-# 📝 05 — Response Documentation
+# 05 — Response Documentation
 
 > **Tools:** Google Docs · Draw.io  
 > **Goal:** Create IR templates, investigation logs, checklists, and post-mortems.
 
 ---
 
-## 📄 Incident Response Report Template
+##  Incident Response Report Template
 
 ```
-╔══════════════════════════════════════════════════════════════════╗
-║           SECURITY INCIDENT RESPONSE REPORT                     ║
-║           CyArt Security Operations Center                      ║
-╚══════════════════════════════════════════════════════════════════╝
+
+         SECURITY INCIDENT RESPONSE REPORT                     
+          CyArt Security Operations Center                    
+
 
 Incident ID:        INC-2025-001
 Report Version:     1.0
@@ -151,7 +151,7 @@ Gaps identified:
 
 ---
 
-## ✅ Phishing Incident Response Checklist
+## Phishing Incident Response Checklist
 
 ```
 PHISHING INCIDENT RESPONSE CHECKLIST
@@ -221,7 +221,7 @@ Completion Time: _____________   Total Duration: _____________
 
 ---
 
-## 🔍 Investigation Steps Log Template
+##  Investigation Steps Log Template
 
 ```
 INVESTIGATION LOG — INC-2025-001
@@ -249,7 +249,7 @@ INVESTIGATION LOG — INC-2025-001
 
 ---
 
-## 📮 Non-Technical Manager Briefing
+## Non-Technical Manager Briefing
 
 ```
 TO:      [Manager Name]
