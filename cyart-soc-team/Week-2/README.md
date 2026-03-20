@@ -1,12 +1,12 @@
-# 📅 Week 2 — Alert Prioritization, Incident Classification & Basic Incident Response
+# Week 2 — Alert Prioritization, Incident Classification & Basic Incident Response
 
-> **Module:** SOC Fundamentals — Week 2  
-> **Focus:** Alert Priority Levels · Incident Classification · Basic Incident Response  
-> **Tools:** Wazuh · TheHive · Velociraptor · FTK Imager · VirusTotal · AlienVault OTX · Metasploit · CrowdSec
+> Module: SOC Fundamentals — Week 2  
+> Focus: Alert Priority Levels · Incident Classification · Basic Incident Response  
+> Tools: Wazuh · TheHive · Velociraptor · FTK Imager · VirusTotal · AlienVault OTX · Metasploit · CrowdSec
 
 ---
 
-## 🗂️ Table of Contents
+##  Table of Contents
 
 | # | Section | Description |
 |---|---------|-------------|
@@ -21,7 +21,7 @@
 
 ---
 
-## 🎯 Learning Objectives
+##  Learning Objectives
 
 By the end of Week 2, you will be able to:
 
@@ -35,7 +35,7 @@ By the end of Week 2, you will be able to:
 
 ---
 
-## ⚙️ Lab Environment Requirements
+##  Lab Environment Requirements
 
 ```
 Host OS       : Kali Linux / Ubuntu 22.04 (recommended)
@@ -52,7 +52,7 @@ VMs Needed:
 
 ---
 
-## 🔗 Key References
+##  Key References
 
 - [NIST SP 800-61 Rev 2](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf)
 - [MITRE ATT&CK Framework](https://attack.mitre.org)
