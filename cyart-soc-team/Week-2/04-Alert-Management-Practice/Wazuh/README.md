@@ -1,11 +1,11 @@
-# 📡 Wazuh — Setup, Configuration & Dashboard Guide
+#  Wazuh — Setup, Configuration & Dashboard Guide
 
 > **Tool:** Wazuh v4.x  
 > **Purpose:** SIEM, Log Analysis, File Integrity Monitoring, Alert Detection
 
 ---
 
-## 🔧 Installation Steps
+##  Installation Steps
 
 ### Option A: Docker Compose (Recommended for Lab)
 
@@ -46,61 +46,24 @@ wazuh.dashboard         /entrypoint.sh       Up      443/tcp → 0.0.0.0:443
 
 ---
 
-## 🌐 Accessing Wazuh Dashboard
+##  Accessing Wazuh Dashboard
 
 **URL:** `https://localhost` or `https://[server-ip]`  
 **Default Login:** `admin` / `SecretPassword`
 
-```
-Screenshot Reference — Wazuh Login Page:
-┌──────────────────────────────────────────────────────┐
-│                   WAZUH                               │
-│              ────────────────                         │
-│                                                       │
-│   Username: [admin              ]                     │
-│   Password: [••••••••••••••••• ]                      │
-│                                                       │
-│   [         Log in              ]                     │
-│                                                       │
-│   © 2024 Wazuh, Inc.                                  │
-└──────────────────────────────────────────────────────┘
-```
+
 
 ---
 
-## 🖥️ Wazuh Dashboard — Key Sections
+##  Wazuh Dashboard — Key Sections
 
 ### Main Overview Dashboard
 
-```
-Screenshot Reference — Wazuh Overview:
-┌────────────────────────────────────────────────────────────────┐
-│  ☰  WAZUH                          [Search...]  [admin ▼]     │
-│  ─────────────────────────────────────────────────────────     │
-│  📊 Overview                                                   │
-│  ─────────────────────────────────────────────────────────     │
-│                                                                │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐        │
-│  │Total Agents  │  │Active Agents │  │  Alerts (24h)│        │
-│  │     12       │  │     10       │  │    1,247     │        │
-│  └──────────────┘  └──────────────┘  └──────────────┘        │
-│                                                                │
-│  Alert Severity Distribution:                                  │
-│  Critical ████░░░░░░░░ 45  (3.6%)                            │
-│  High     ████████░░░░ 203 (16.3%)                           │
-│  Medium   ████████████ 587 (47.1%)                           │
-│  Low      ████████░░░░ 412 (33.0%)                           │
-│                                                                │
-│  Top Alerts:                                                   │
-│  1. Authentication failure - 547 events                       │
-│  2. File integrity monitoring - 203 events                    │
-│  3. Rootcheck - 187 events                                    │
-└────────────────────────────────────────────────────────────────┘
-```
+
 
 ---
 
-## 📥 Installing a Wazuh Agent
+##  Installing a Wazuh Agent
 
 ### Linux Agent Installation
 
@@ -136,7 +99,7 @@ sudo systemctl status wazuh-agent
 
 ---
 
-## 🔍 Creating Custom Detection Rules
+##  Creating Custom Detection Rules
 
 ### Rule File Location
 ```bash
@@ -184,7 +147,7 @@ sudo /var/ossec/bin/ossec-logtest
 
 ---
 
-## 📊 Creating a Dashboard in Wazuh
+##  Creating a Dashboard in Wazuh
 
 ### Step-by-Step: Alert Priority Pie Chart
 
@@ -208,32 +171,10 @@ Buckets:        Terms → rule.level
 
 **Step 5:** Save dashboard as **"SOC-Week2-Alert-Priority"**
 
-```
-Screenshot Reference — Alert Priority Dashboard:
-┌────────────────────────────────────────────────────────────────┐
-│  SOC Week 2 — Alert Priority Dashboard            [Last 24h]  │
-│  ─────────────────────────────────────────────────────────     │
-│                                                                │
-│   Alert Severity Distribution        Alert Trend (24h)        │
-│   ┌─────────────────┐               ┌───────────────────┐     │
-│   │        ░░       │               │    ▂▄█▄▂          │     │
-│   │     ░░░░░░░     │               │  ▂████████▄       │     │
-│   │   ░░░████░░░░   │               │ ▂█████████████▄   │     │
-│   │  ░░░░██████░░   │  ■ Critical   │___________________│     │
-│   │   ░░░████░░░    │  ■ High       │  00:00        24:00│    │
-│   │     ░░░░░░░     │  ■ Medium                          │     │
-│   │        ░        │  ■ Low        Top Rules Triggered: │     │
-│   └─────────────────┘               ┌───────────────────┐     │
-│   Critical: 45  (3.6%)              │ SSH Brute Force 547│     │
-│   High:    203  (16.3%)             │ FIM Changes     203│     │
-│   Medium:  587  (47.1%)             │ Rootcheck       187│     │
-│   Low:     412  (33.0%)             └───────────────────┘     │
-└────────────────────────────────────────────────────────────────┘
-```
 
 ---
 
-## 🔔 Setting Up Active Response (IP Blocking)
+##  Setting Up Active Response (IP Blocking)
 
 ```xml
 <!-- Add to /var/ossec/etc/ossec.conf -->
@@ -252,7 +193,7 @@ sudo cat /var/ossec/logs/active-responses.log
 
 ---
 
-## 📋 Common Wazuh CLI Commands
+##  Common Wazuh CLI Commands
 
 ```bash
 # Check agent list and status
