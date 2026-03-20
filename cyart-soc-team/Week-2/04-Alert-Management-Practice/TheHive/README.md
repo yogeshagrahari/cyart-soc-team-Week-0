@@ -1,11 +1,11 @@
-# 🐝 TheHive — Incident Ticketing Guide
+#  TheHive — Incident Ticketing Guide
 
-> **Tool:** TheHive 5.x  
-> **Purpose:** Security Incident Case Management, Alert Triage, Collaborative Investigation
+> Tool: TheHive 5.x  
+> Purpose: Security Incident Case Management, Alert Triage, Collaborative Investigation
 
 ---
 
-## 🔧 Installation Steps
+## Installation Steps
 
 ### Docker Installation (Recommended)
 
@@ -36,92 +36,26 @@ docker-compose ps
 docker-compose logs thehive | tail -20
 ```
 
-**Access:** `http://localhost:9000`  
-**Default Admin:** `admin@thehive.local` / `secret`
+Access: `http://localhost:9000`  
+Default Admin: `admin@thehive.local` / `secret`
 
 ---
 
-## 🌐 TheHive Dashboard Overview
+## TheHive Dashboard Overview
 
-```
-Screenshot Reference — TheHive Dashboard:
-┌────────────────────────────────────────────────────────────────┐
-│  🐝 TheHive                                  [admin ▼]  [+]  │
-│  ──────────────────────────────────────────────────────────    │
-│  📊 Dashboard  📋 Cases  🚨 Alerts  🔍 Observables  ⚙ Admin  │
-│                                                                │
-│  Recent Activity                    Statistics                 │
-│  ┌───────────────────────────────┐  ┌──────────────────────┐  │
-│  │ [NEW]  INC-001 Ransomware    │  │  Open Cases:    5    │  │
-│  │        Aug 18 11:45          │  │  In Progress:   3    │  │
-│  │ [OPEN] INC-002 Phishing      │  │  Resolved:      12   │  │
-│  │        Aug 18 10:30          │  │  Alerts Today:  47   │  │
-│  │ [DONE] INC-003 Port Scan     │  └──────────────────────┘  │
-│  │        Aug 17 09:00          │                            │
-│  └───────────────────────────────┘  TLP Distribution:        │
-│                                     RED:   2  AMBER: 8       │
-│                                     GREEN: 3  WHITE: 4       │
-└────────────────────────────────────────────────────────────────┘
-```
+
 
 ---
 
-## 🎫 Creating an Incident Ticket — Step by Step
+## Creating an Incident Ticket — Step by Step
 
 ### Step 1: Navigate to Cases → New Case
 
-```
-Screenshot Reference — New Case Form:
-┌────────────────────────────────────────────────────────────────┐
-│  Create New Case                                    [✕]        │
-│  ──────────────────────────────────────────────────────────    │
-│                                                                │
-│  Title:        [Critical] Ransomware Detected on Server-X      │
-│                                                                │
-│  Severity:     ○ Low  ○ Medium  ○ High  ● Critical            │
-│                                                                │
-│  TLP:          ○ WHITE  ○ GREEN  ○ AMBER  ● RED               │
-│                                                                │
-│  PAP:          ● WHITE  ○ GREEN  ○ AMBER  ○ RED               │
-│                                                                │
-│  Tags:         [ransomware] [windows] [server] [+Add]         │
-│                                                                │
-│  Assignee:     [SOC Analyst ▼]                                │
-│                                                                │
-│  Description:                                                  │
-│  ┌───────────────────────────────────────────────────────┐    │
-│  │ Ransomware activity detected on production server     │    │
-│  │ Server-X (10.0.0.25). File encryption in progress.   │    │
-│  │ Source: Wazuh FIM Alert Rule 550                      │    │
-│  └───────────────────────────────────────────────────────┘    │
-│                                                                │
-│              [Cancel]  [Create Case]                          │
-└────────────────────────────────────────────────────────────────┘
-```
 
 ### Step 2: Add Observables (IOCs)
 
-```
-Screenshot Reference — Add Observable:
-┌────────────────────────────────────────────────────────────────┐
-│  Add Observable                                     [✕]        │
-│  ──────────────────────────────────────────────────────────    │
-│                                                                │
-│  Type:         [File Hash (MD5/SHA256) ▼]                     │
-│                                                                │
-│  Value:        a3f7d12e4b9c0e5f8a1d3c7e9b2f4a6d8c0e2f4a...   │
-│                                                                │
-│  Description:  crypto_locker.exe — ransomware binary          │
-│                                                                │
-│  Tags:         [malware] [ransomware]                         │
-│                                                                │
-│  ● Mark as IoC    □ Ignore for similarity                     │
-│                                                                │
-│              [Cancel]  [Add Observable]                       │
-└────────────────────────────────────────────────────────────────┘
-```
 
-**Observable Types to Add:**
+Observable Types to Add:
 ```
 Type: hash          Value: sha256:a3f7d12e...    (Malware binary)
 Type: ip            Value: 192.168.1.50          (Source host)
@@ -134,14 +68,14 @@ Type: domain        Value: evil-c2.ru            (C2 domain if known)
 
 ```
 Tasks to Create:
-  ┌─────────────────────────────────────────────────────────┐
+  
   │ Task 1: Initial Triage              [Analyst-A]         │
   │ Task 2: Isolate Affected System     [Analyst-A]         │
   │ Task 3: Collect Evidence            [Analyst-B]         │
   │ Task 4: Threat Intelligence Check   [Analyst-A]         │
   │ Task 5: Eradication                 [Tier 2]            │
   │ Task 6: Write Post-Mortem Report    [SOC Lead]          │
-  └─────────────────────────────────────────────────────────┘
+
 ```
 
 ### Step 4: Add a Case Timeline Log
@@ -162,7 +96,7 @@ Timeline Entry:
 
 ---
 
-## 📋 Complete Incident Ticket — Filled Example
+##  Complete Incident Ticket — Filled Example
 
 ```
 Case ID:        CS-2025-001
@@ -198,7 +132,7 @@ TASKS:
 
 ---
 
-## ⚡ TheHive API — Automated Ticket Creation
+##  TheHive API — Automated Ticket Creation
 
 ```bash
 # Create TheHive case via API (curl)
@@ -221,7 +155,7 @@ curl -X POST "http://localhost:9000/api/v1/case" \
 
 ---
 
-## 📚 Resources
+##  Resources
 
 - [TheHive Documentation](https://docs.thehive-project.org)
 - [TheHive API Reference](https://docs.thehive-project.org/thehive/api/case/create-case/)
