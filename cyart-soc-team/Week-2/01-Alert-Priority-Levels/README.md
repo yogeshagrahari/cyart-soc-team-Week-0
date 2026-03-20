@@ -86,35 +86,28 @@ SOC Priority:     P1 — CRITICAL (immediate response required)
 ### 1.3 Alert Prioritization Decision Framework
 
 ```
-INCOMING ALERT
-      │
-      ▼
-┌─────────────────────────────────────────┐
+      INCOMING ALERT
+            │
+            |
+            |
 │ Step 1: Is there active exploitation?   │
 │   YES → P1 Critical                     │
 │   NO  → Continue to Step 2             │
-└─────────────────────────────────────────┘
-      │
-      ▼
-┌─────────────────────────────────────────┐
+
+             │
 │ Step 2: Is a critical asset affected?   │
 │   YES + CVSS ≥ 7.0  → P2 High          │
 │   NO  → Continue to Step 3             │
-└─────────────────────────────────────────┘
-      │
-      ▼
-┌─────────────────────────────────────────┐
+              │
+
 │ Step 3: Is there public exploit code?   │
 │   YES + CVSS 4-6.9  → P2/P3            │
 │   NO  → P3 or P4                       │
-└─────────────────────────────────────────┘
-      │
-      ▼
-┌─────────────────────────────────────────┐
+              │
 │ Step 4: Business Impact Assessment      │
 │   Financial / Regulatory → Escalate     │
 │   Operational only → Standard IR       │
-└─────────────────────────────────────────┘
+
 ```
 
 ---
