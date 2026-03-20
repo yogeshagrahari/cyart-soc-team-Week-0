@@ -1,12 +1,3 @@
-#!/bin/bash
-# ============================================================
-# CyArt SOC Team — GitHub Repository Setup Script
-# Run this script ONCE after cloning or creating the repo
-# ============================================================
-
-echo "=================================================="
-echo " CyArt SOC Team — GitHub Repository Setup"
-echo "=================================================="
 
 # Step 1: Initialize git (if not already done)
 git init
@@ -66,5 +57,4 @@ echo ""
 echo "  2. Add remote and push:"
 echo "     git remote add origin https://github.com/$GIT_USERNAME/$REPO_NAME.git"
 echo "     git push -u origin main"
-echo ""
-echo "=================================================="
+
