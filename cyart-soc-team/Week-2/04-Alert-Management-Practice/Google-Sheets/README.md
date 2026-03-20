@@ -1,11 +1,11 @@
-# 📊 Google Sheets — Alert Classification Tracker
+# Google Sheets — Alert Classification Tracker
 
-> **Tool:** Google Sheets  
-> **Purpose:** Track, score, and prioritize alerts with CVSS scoring and MITRE ATT&CK mapping
+> Tool: Google Sheets  
+> Purpose: Track, score, and prioritize alerts with CVSS scoring and MITRE ATT&CK mapping
 
 ---
 
-## 📋 Sheet Structure
+##  Sheet Structure
 
 ### Sheet 1: Alert Log
 
@@ -28,11 +28,11 @@
 
 ---
 
-## 🔢 Formulas
+##  Formulas
 
 ### Auto-Priority Assignment (Column J)
 ```
-=IF(I2>=9,"🔴 P1-Critical",IF(I2>=7,"🟠 P2-High",IF(I2>=4,"🟡 P3-Medium","🟢 P4-Low")))
+=IF(I2>=9," P1-Critical",IF(I2>=7," P2-High",IF(I2>=4," P3-Medium"," P4-Low")))
 ```
 
 ### Auto-Color Coding (Conditional Formatting Rules)
@@ -53,47 +53,47 @@ Rule 4: If J = "P4-Low"       → Background: #00FF7F (Green)
 
 ---
 
-## 📊 Sample Data — Alert Log
+##  Sample Data — Alert Log
 
 ```
 Alert Classification Sheet — Week 2 Practice
 ══════════════════════════════════════════════════════════════════════════════════
 
-┌──────────┬───────────────────┬────────┬─────────────────────────┬───────────────┬──────────────┬───────────┬──────────┬────────────┬────────────────┐
+
 │ Alert ID │ Date/Time         │ Source │ Description             │ Source IP     │ Target       │ Asset Tier│ CVSS     │ Priority   │ Status         │
-├──────────┼───────────────────┼────────┼─────────────────────────┼───────────────┼──────────────┼───────────┼──────────┼────────────┼────────────────┤
-│ ALT-001  │ 2025-08-18 11:00  │ Wazuh  │ Log4Shell Exploit       │ 45.33.32.156  │ prod-web-01  │ Tier 1    │ 10.0     │🔴 P1-Crit  │ Open           │
-│ ALT-002  │ 2025-08-18 11:15  │ Wazuh  │ Port Scan Detected      │ 192.168.1.200 │ test-vm-03   │ Tier 4    │ 2.1      │🟢 P4-Low   │ Closed         │
-│ ALT-003  │ 2025-08-18 11:45  │ Wazuh  │ SSH Brute Force         │ 192.168.1.100 │ ssh-server   │ Tier 2    │ 7.5      │🟠 P2-High  │ In Progress    │
-│ ALT-004  │ 2025-08-18 12:00  │ Wazuh  │ Ransomware File Create  │ 10.0.0.25     │ prod-db-01   │ Tier 1    │ 9.8      │🔴 P1-Crit  │ Open           │
-│ ALT-005  │ 2025-08-18 12:30  │ Wazuh  │ Failed Admin Login      │ 10.0.0.55     │ ad-dc-01     │ Tier 1    │ 5.4      │🟡 P3-Med   │ Closed         │
-└──────────┴───────────────────┴────────┴─────────────────────────┴───────────────┴──────────────┴───────────┴──────────┴────────────┴────────────────┘
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+│ ALT-001  │ 2025-08-18 11:00  │ Wazuh  │ Log4Shell Exploit       │ 45.33.32.156  │ prod-web-01  │ Tier 1    │ 10.0     │ P1-Crit  │ Open           │
+│ ALT-002  │ 2025-08-18 11:15  │ Wazuh  │ Port Scan Detected      │ 192.168.1.200 │ test-vm-03   │ Tier 4    │ 2.1      │ P4-Low   │ Closed         │
+│ ALT-003  │ 2025-08-18 11:45  │ Wazuh  │ SSH Brute Force         │ 192.168.1.100 │ ssh-server   │ Tier 2    │ 7.5      │ P2-High  │ In Progress    │
+│ ALT-004  │ 2025-08-18 12:00  │ Wazuh  │ Ransomware File Create  │ 10.0.0.25     │ prod-db-01   │ Tier 1    │ 9.8      │ P1-Crit  │ Open           │
+│ ALT-005  │ 2025-08-18 12:30  │ Wazuh  │ Failed Admin Login      │ 10.0.0.55     │ ad-dc-01     │ Tier 1    │ 5.4      │ P3-Med   │ Closed         │
+
 ```
 
 ---
 
-## 📋 Sheet 2: MITRE ATT&CK Mapping
+##  Sheet 2: MITRE ATT&CK Mapping
 
 ```
-┌──────────┬──────────────────────┬───────────────────┬──────────────┬─────────────────────────────┐
+
 │ Alert ID │ Technique ID         │ Technique Name    │ Tactic       │ Detection Method            │
-├──────────┼──────────────────────┼───────────────────┼──────────────┼─────────────────────────────┤
+
 │ ALT-001  │ T1190                │ Exploit Public App│ Initial Acc. │ Wazuh web rule + WAF        │
 │ ALT-002  │ T1595.001            │ Active Scanning   │ Recon        │ Network IDS signature       │
 │ ALT-003  │ T1110.001            │ Password Guessing │ Cred Access  │ Auth log correlation        │
 │ ALT-004  │ T1486                │ Data Encrypted    │ Impact       │ FIM + entropy analysis      │
 │ ALT-005  │ T1078                │ Valid Accounts    │ Priv Esc     │ Auth log + baseline         │
-└──────────┴──────────────────────┴───────────────────┴──────────────┴─────────────────────────────┘
+
 ```
 
 ---
 
-## 🎯 Setting Up the Sheet (Step by Step)
+##  Setting Up the Sheet (Step by Step)
 
 ### Step 1: Create New Google Sheet
 1. Go to https://sheets.google.com
-2. Click **"Blank Spreadsheet"**
-3. Rename to **"CyArt SOC — Week 2 Alert Tracker"**
+2. Click "Blank Spreadsheet"
+3. Rename to "CyArt SOC — Week 2 Alert Tracker"
 
 ### Step 2: Create Headers (Row 1)
 ```
@@ -115,33 +115,33 @@ N1: Notes
 
 ### Step 3: Add Priority Formula to J2
 ```
-=IF(I2="","No Score",IF(I2>=9,"🔴 P1-Critical",IF(I2>=7,"🟠 P2-High",IF(I2>=4,"🟡 P3-Medium","🟢 P4-Low"))))
+=IF(I2="","No Score",IF(I2>=9,"P1-Critical",IF(I2>=7,"P2-High",IF(I2>=4,"P3-Medium"," P4-Low"))))
 ```
 Then drag down to J100 to apply to all rows.
 
 ### Step 4: Freeze Header Row
-- Select Row 1 → **View → Freeze → 1 Row**
+- Select Row 1 → View → Freeze → 1 Row
 
 ### Step 5: Add Data Validation for Status Column (L)
-- Select column L → **Data → Data Validation**
+- Select column L → Data → Data Validation
 - List: `Open, In Progress, Closed, False Positive`
 
 ### Step 6: Protect Header Row
-- Right-click Row 1 → **Protect Range** → Only allow editors
+- Right-click Row 1 → Protect Range → Only allow editors
 
 ---
 
-## 📊 Sheet 3: Priority Summary Dashboard
+##  Sheet 3: Priority Summary Dashboard
 
 ```
 === PRIORITY SUMMARY (Auto-updating) ===
 
 Priority     | Count | % of Total
 ─────────────────────────────────────
-🔴 Critical  |   2   |   28.6%
-🟠 High      |   1   |   14.3%
-🟡 Medium    |   1   |   14.3%
-🟢 Low       |   1   |   14.3%
+ Critical  |   2   |   28.6%
+ High      |   1   |   14.3%
+ Medium    |   1   |   14.3%
+ Low       |   1   |   14.3%
 Total        |   7   |  100.0%
 
 === STATUS SUMMARY ===
@@ -151,7 +151,7 @@ Closed       |   2   |
 False Positive|  0   |
 ```
 
-**Formulas:**
+Formulas:
 ```
 =COUNTIF(Log!J:J,"*Critical*")
 =COUNTIF(Log!J:J,"*High*")
