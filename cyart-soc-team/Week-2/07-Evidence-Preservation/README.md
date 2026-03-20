@@ -196,7 +196,7 @@ sha256sum /forensics/memory_dump_prod-db-01_20250818.mem
 
 ### Disk Image Capture
 
-**Step 1:** File → Add Evidence Item → Physical Drive
+**Step 1:** File - Add Evidence Item -- Physical Drive
 
 ##  Chain of Custody Documentation
 
@@ -212,9 +212,9 @@ Collected By:       SOC Analyst-A
 Collection Date:    2025-08-18
 Location:           prod-db-01 (10.0.0.25) — Server Room A
 
-──────────────────────────────────────────────────────────────────
+
 EVIDENCE ITEMS:
-──────────────────────────────────────────────────────────────────
+
 
 
 Item #1
@@ -252,9 +252,9 @@ Item #4
   SHA256 Hash:    c9d3b6a0e4f8c2d6a0e4f8b2d6c0e4a8f2c6d0e4
   Collected At:   2025-08-18 12:10 UTC
 
-──────────────────────────────────────────────────────────────────
+
 CHAIN OF CUSTODY:
-──────────────────────────────────────────────────────────────────
+
 
 Transfer 1:
   From:     SOC Analyst-A
@@ -270,9 +270,9 @@ Transfer 2:
   Purpose:  Malware analysis
   Signature: ___________________
 
-──────────────────────────────────────────────────────────────────
+
 INTEGRITY VERIFICATION LOG:
-──────────────────────────────────────────────────────────────────
+
 
 Verified By:    SOC Analyst-A
 Verified At:    2025-08-18 12:25 UTC
@@ -282,7 +282,7 @@ Result:          All hashes match — evidence integrity confirmed
 
 ---
 
-## 📚 Resources
+##  Resources
 
 - [Velociraptor Documentation](https://docs.velociraptor.app)
 - [Velociraptor VQL Reference](https://docs.velociraptor.app/vql_reference/)
