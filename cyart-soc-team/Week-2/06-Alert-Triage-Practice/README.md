@@ -1,4 +1,4 @@
-# 🔍 06 — Alert Triage Practice
+# 06 — Alert Triage Practice
 
 > **Tools:** Wazuh · VirusTotal · AlienVault OTX  
 > **Goal:** Simulate alert triage, validate IOCs with threat intelligence, distinguish true positives from false positives.
@@ -11,29 +11,24 @@
 INCOMING ALERT
      │
      ▼
-┌─────────────────────────────────────────────────────────────┐
-│ STEP 1: Read the Alert                                      │
-│   → What is the rule? What triggered it?                    │
-│   → What is the source IP / hostname?                       │
-│   → What is the timestamp?                                  │
-└─────────────────────────┬───────────────────────────────────┘
+
+ STEP 1: Read the Alert                                     
+   → What is the rule? What triggered it?                   
+   → What is the source IP / hostname?                      
+   → What is the timestamp?                               
+
+
+STEP 2: Is this a known false positive pattern?         
+  → YES → Mark as FP, document, and close               
+   → NO  → Continue to Step 3                           
+
+ STEP 3: Threat Intelligence Check                         
+   → Check IP in VirusTotal / AlienVault OTX               
+   → Check file hash in VirusTotal                         
+   → Check domain/URL reputation                           
+
                           │
-                          ▼
-┌─────────────────────────────────────────────────────────────┐
-│ STEP 2: Is this a known false positive pattern?             │
-│   → YES → Mark as FP, document, and close                  │
-│   → NO  → Continue to Step 3                               │
-└─────────────────────────┬───────────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────────┐
-│ STEP 3: Threat Intelligence Check                           │
-│   → Check IP in VirusTotal / AlienVault OTX                │
-│   → Check file hash in VirusTotal                          │
-│   → Check domain/URL reputation                            │
-└─────────────────────────┬───────────────────────────────────┘
-                          │
-              ┌───────────┴───────────┐
+              -------------------------
               ▼                       ▼
       MALICIOUS / SUSPICIOUS     CLEAN / UNKNOWN
               │                       │
@@ -45,7 +40,7 @@ INCOMING ALERT
 
 ---
 
-## 🖥️ Section 1: Wazuh Triage
+##  Section 1: Wazuh Triage
 
 ### Accessing Alerts in Wazuh
 
@@ -53,56 +48,10 @@ INCOMING ALERT
 
 **Step 2:** Navigate to **Security Events** → **Threat Detection**
 
-```
-Screenshot Reference — Wazuh Security Events:
-┌────────────────────────────────────────────────────────────────┐
-│  ☰  WAZUH → Security Events                    [admin ▼]      │
-│  ─────────────────────────────────────────────────────────     │
-│                                                                │
-│  🔍 [Search alerts...    ] [Last 24 hours ▼]  [Refresh ▼]    │
-│                                                                │
-│  Filters: [Agent: All ▼] [Level: All ▼] [MITRE: All ▼]       │
-│                                                                │
-│  ┌──────┬──────────────────┬────────────┬───────┬───────────┐ │
-│  │Level │ Rule Description │ Agent Name │ Count │ Timestamp │ │
-│  ├──────┼──────────────────┼────────────┼───────┼───────────┤ │
-│  │ 12   │ SSH brute force  │ prod-db-01 │  547  │ 11:43     │ │
-│  │ 10   │ FIM - new file   │ prod-db-01 │  203  │ 11:41     │ │
-│  │  7   │ Failed sudo      │ workstation│   12  │ 11:30     │ │
-│  │  5   │ Syscheck - change│ web-01     │   87  │ 10:15     │ │
-│  └──────┴──────────────────┴────────────┴───────┴───────────┘ │
-│                                                                │
-│  [Export CSV]  [Visualize]  [Save Search]                     │
-└────────────────────────────────────────────────────────────────┘
-```
 
 ### Viewing a Specific Alert Detail
 
 **Click on any alert row to expand:**
-
-```
-Alert Detail — SSH Brute Force:
-┌────────────────────────────────────────────────────────────────┐
-│  Alert Details                                       [✕]      │
-│  ─────────────────────────────────────────────────────────     │
-│                                                                │
-│  Rule ID:      100001                                          │
-│  Level:        12                                             │
-│  Description:  SSH brute force attack: 547 attempts in 60s    │
-│  Agent:        prod-db-01 (10.0.0.25)                         │
-│  Timestamp:    2025-08-18T11:43:00.000Z                       │
-│  MITRE:        T1110 — Brute Force                            │
-│                                                                │
-│  Log Sample:                                                   │
-│  Aug 18 11:43:00 sshd[12345]: Failed password for root        │
-│  from 192.168.1.100 port 22 ssh2                              │
-│                                                                │
-│  Source IP:    192.168.1.100                                  │
-│  Destination:  10.0.0.25:22                                   │
-│                                                                │
-│  [Open in TheHive]  [Add to Watchlist]  [Download Alert]      │
-└────────────────────────────────────────────────────────────────┘
-```
 
 ### Wazuh CLI — Searching Logs
 
@@ -125,7 +74,7 @@ sudo /var/ossec/bin/ossec-reportd
 
 ---
 
-## 🦠 Section 2: VirusTotal Analysis
+##  Section 2: VirusTotal Analysis
 
 ### How to Use VirusTotal
 
@@ -141,64 +90,17 @@ Step 3: Paste your hash:
 Step 4: Press Enter
 ```
 
-```
-Screenshot Reference — VirusTotal Hash Result:
-┌────────────────────────────────────────────────────────────────┐
-│  VirusTotal                               [Search...     🔍]  │
-│  ─────────────────────────────────────────────────────────     │
-│                                                                │
-│  📄 crypto_locker.exe                                          │
-│  SHA256: a3f7d12e4b9c0e5f8a1d3c7e9b2f4a6d8c0...              │
-│                                                                │
-│  ┌─────────────────────────────────────────────────────────┐  │
-│  │  🚨  58 / 72  security vendors flagged this file        │  │
-│  │                                                         │  │
-│  │  Malicious ████████████████████████████░░░░ 58          │  │
-│  │  Suspicious ██░ 3                                       │  │
-│  │  Undetected ░░░ 11                                      │  │
-│  └─────────────────────────────────────────────────────────┘  │
-│                                                                │
-│  Detection Names:                                              │
-│  Kaspersky:    Trojan-Ransom.Win32.Locky.abc                   │
-│  Sophos:       Troj/Ransom-GHI                                 │
-│  Microsoft:    Ransom:Win32/CryptoLocker.A                     │
-│  CrowdStrike:  malicious_confidence_100%                       │
-│                                                                │
-│  First Seen:   2025-08-10    Last Seen: 2025-08-18            │
-│  File Type:    PE32+ executable (GUI) x86-64                  │
-│  File Size:    287 KB                                          │
-└────────────────────────────────────────────────────────────────┘
-```
+
 
 #### Method 2: Check an IP Address
 
 ```
 Step 1: Click "Search" tab
-Step 2: Enter IP: 45.33.32.156
+Step 2: Enter IP: IP
 Step 3: Review results
 ```
 
-```
-Screenshot Reference — VirusTotal IP Result:
-┌────────────────────────────────────────────────────────────────┐
-│  IP Address: 45.33.32.156                                      │
-│  ─────────────────────────────────────────────────────────     │
-│                                                                │
-│  ⚠️  12 / 94 security vendors flagged this IP                 │
-│                                                                │
-│  Country:    Russia 🇷🇺                                         │
-│  ASN:        AS12389 — Rostelecom                              │
-│  Owner:      Unknown threat actor                              │
-│                                                                │
-│  Last Analysis: 2025-08-18                                     │
-│  Categories:   Malware distribution, C2 server                │
-│                                                                │
-│  Community Score:  -27  (Malicious)                           │
-│                                                                │
-│  Associated Files: 14 malware samples linked                   │
-│  Relations:  Contacted by 3 malware families                  │
-└────────────────────────────────────────────────────────────────┘
-```
+
 
 #### VirusTotal via API (Automated)
 
@@ -221,7 +123,7 @@ curl -s "https://www.virustotal.com/api/v3/ip_addresses/${IP}" \
 
 ---
 
-## 🛰️ Section 3: AlienVault OTX Analysis
+##  Section 3: AlienVault OTX Analysis
 
 ### How to Use AlienVault OTX
 
@@ -236,35 +138,6 @@ curl -s "https://www.virustotal.com/api/v3/ip_addresses/${IP}" \
 
 **Step 3:** Search your IOC (IP, hash, domain, URL)
 
-```
-Screenshot Reference — AlienVault OTX IP Search:
-┌────────────────────────────────────────────────────────────────┐
-│  AlienVault OTX Open Threat Exchange                           │
-│  ─────────────────────────────────────────────────────────     │
-│  [Search indicators...          🔍]                            │
-│  ─────────────────────────────────────────────────────────     │
-│                                                                │
-│  🌐 IPv4: 45.33.32.156                                         │
-│  ─────────────────────────────────────────────────────────     │
-│                                                                │
-│  ⚠️  Malicious Activity Detected                               │
-│                                                                │
-│  Pulse Count:      14 Threat Intelligence Reports              │
-│  Activities:       Scanning, C2, Malware Distribution          │
-│  Countries Targeted: US, UK, DE, FR, IN                        │
-│  First Seen:       2025-01-12                                  │
-│  Last Seen:        2025-08-17                                  │
-│                                                                │
-│  Associated Malware:                                           │
-│  • CryptoLocker Ransomware (High Confidence)                   │
-│  • Emotet (Medium Confidence)                                  │
-│                                                                │
-│  Threat Actors:   Lazarus Group (Low Confidence)               │
-│                                                                │
-│  Related Pulses:                                               │
-│  [Ransomware Campaign Aug 2025]  [Eastern European C2 IPs]    │
-└────────────────────────────────────────────────────────────────┘
-```
 
 #### OTX via API (Automated)
 
@@ -280,7 +153,7 @@ API_KEY = "YOUR_OTX_API_KEY"
 otx = OTXv2(API_KEY)
 
 # Check IP reputation
-ip = "45.33.32.156"
+ip = "IP"
 alerts = otx.get_indicator_details_full(IndicatorTypes.IPv4, ip)
 print(f"\nIP: {ip}")
 print(f"Pulse Count: {len(alerts['general']['pulse_info']['pulses'])}")
@@ -298,7 +171,7 @@ python3 otx_check.py
 
 ---
 
-## 📊 Triage Results Documentation
+##  Triage Results Documentation
 
 ### Triage Log Template
 
