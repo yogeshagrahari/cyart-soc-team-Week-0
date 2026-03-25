@@ -2,7 +2,18 @@
 
 > **Tools:** Velociraptor · FTK Imager  
 > **Goal:** Collect volatile and non-volatile forensic evidence, hash all artifacts, and maintain chain of custody.
+> **Difficulty:** Intermediate
+> **Duration:** 2–3 hours 
 
+---
+
+## Prerequisites
+- Windows test VM (Windows 10/11 or Server)
+- Velociraptor server deployed (or standalone executable)
+- FTK Imager installed (free from AccessData)
+- Linux system with sha256sum
+
+---
 ---
 
 ##  Theory: Order of Volatility
@@ -11,8 +22,6 @@
 Collect evidence in order of most volatile → least volatile:
 
 ```
-
----
 
 ##  Section 1: Velociraptor
 
@@ -33,6 +42,12 @@ sudo mv velociraptor-v0.7.0-linux-amd64 /usr/local/bin/velociraptor
 # Step 2: Generate server configuration
 velociraptor config generate -i
 
+# Answer prompts:
+# Deployment type: Self-signed SSL
+# Which IP/domain: <your-server-ip>
+# Admin username: admin
+# Admin password: <strong-password>
+
 # Follow the interactive prompts:
 #   Deployment Type: Self Signed SSL
 #   Public DNS: localhost (or your server IP)
@@ -40,10 +55,29 @@ velociraptor config generate -i
 #   Datastore: /opt/velociraptor/
 
 # Step 3: Start Velociraptor server
-velociraptor --config server.config.yaml frontend -v &
-
+velociraptor --config server.config.yaml frontend -v
+# Access at: https://<server-ip>:8889
 # Step 4: Create admin user
 velociraptor --config server.config.yaml user add admin --role=administrator
+
+Deploy Velociraptor Agent on Windows VM
+```powershell
+# On Windows test VM (PowerShell as Administrator):
+
+# Download the Windows agent MSI
+# (Get URL from Velociraptor UI → Add clients → Windows)
+
+# Install agent silently
+msiexec /i velociraptor-agent.msi /quiet
+
+# Verify agent is running
+Get-Service | Where-Object {$_.Name -like "*velociraptor*"}
+
+# Expected output:
+# velociraptor   Running   Velociraptor
+```
+
+
 ```
 
 **Access GUI:** `https://localhost:8889`
@@ -64,103 +98,179 @@ Get-Service -Name Velociraptor
 
 ---
 
-### Velociraptor Dashboard Overview
 
+## Volatile Data Collection
+
+### Step 2a: Collect Network Connections
+```sql
+-- In Velociraptor UI → Collect Artifact → Windows.Network.Netstat
+-- Or run this VQL in notebook:
+
+SELECT Pid, Name, Status, LocalAddress, LocalPort, 
+       RemoteAddress, RemotePort
+FROM netstat()
+WHERE Status = 'ESTABLISHED'
+ORDER BY Name
 ```
 
+**Expected output (save to CSV):**
 ```
-
----
-
-### VQL Queries for Forensic Collection
-
-#### Collect Network Connections (Volatile Data)
+| Pid  | Name          | Status      | LocalAddress   | LocalPort | RemoteAddress  | RemotePort |
+|------|---------------|-------------|----------------|-----------|----------------|------------|
+| 4856 | chrome.exe    | ESTABLISHED | 192.168.1.101  | 52341     | 142.250.80.46  | 443        |
+| 1234 | svchost.exe   | ESTABLISHED | 192.168.1.101  | 49152     | 52.86.100.12   | 443        |
+| 8892 | UNKNOWN.exe   | ESTABLISHED | 192.168.1.101  | 55431     | 185.220.101.45 | 4444       |
+```
 
 ```sql
--- Run in Velociraptor Notebook or Hunt
--- Collect all active network connections
-SELECT * FROM netstat()
-WHERE Status = 'ESTABLISHED' OR Status = 'LISTEN'
-ORDER BY Pid
-
--- Expected output:
--- Pid  | Laddr            | Raddr            | Status      | Process
--- 1234 | 0.0.0.0:22       | 192.168.1.100:56123 | ESTABLISHED | sshd
--- 5678 | 0.0.0.0:80       | 0.0.0.0:0        | LISTEN      | nginx
+-- Save results to CSV:
+-- In Velociraptor: Download results → Export CSV
+-- Filename: netstat_SERVER-X_2026-03-24.csv
 ```
 
-
-**Save output:**
-```bash
-# Export from CLI
-velociraptor --config server.config.yaml query \
-  "SELECT * FROM netstat()" > /evidence/netstat_$(date +%Y%m%d_%H%M%S).csv
-
-# Hash the file
-sha256sum /evidence/netstat_*.csv | tee /evidence/netstat.sha256
-```
-
-#### Collect Running Processes
-
+### Step 2b: Collect Running Processes
 ```sql
--- List all running processes with parent info
-SELECT Pid, Ppid, Name, Exe, CommandLine, CreateTime
+-- VQL: Running processes with network connections
+SELECT Pid, Ppid, Name, Exe, CommandLine, Username, 
+       CreateTime
 FROM pslist()
 ORDER BY CreateTime DESC
-```
-
-#### Collect Memory Dump via Artifact
-
-```sql
--- Collect full memory dump (Windows)
-SELECT * FROM Artifact.Windows.Memory.Acquisition(
-    destination="C:\\forensics\\memory_dump.raw"
-)
-```
-
-```bash
-# After collection, hash the dump
-sha256sum /forensics/memory_dump.raw
-# Output: a3f7d12e4b9c0e5f8a1d3c7e9b2... memory_dump.raw
-
-# Alternative using winpmem (on Windows)
-winpmem_mini_x64_rc2.exe memory_dump.raw
-```
-
-#### Collect Filesystem Timeline
-
-```sql
--- List recently modified files (last 2 hours)
-SELECT FullPath, Mtime, Atime, Ctime, Size, IsDir
-FROM glob(globs="C:\\Users\\**\\*")
-WHERE Mtime > now() - 7200
-ORDER BY Mtime DESC
-```
-
-#### Collect Prefetch Files (Windows execution evidence)
-
-```sql
--- Prefetch shows what executed and when
-SELECT * FROM Artifact.Windows.Forensics.Prefetch()
-ORDER BY LastRunTime DESC
-LIMIT 50
-```
-
-#### Collect Windows Event Logs
-
-```sql
--- Security events: logins
-SELECT System.TimeCreated.SystemTime AS Time,
-       System.EventID.Value AS EventID,
-       EventData.SubjectUserName AS User,
-       EventData.IpAddress AS IP
-FROM parse_evtx(filename="C:\\Windows\\System32\\winevt\\Logs\\Security.evtx")
-WHERE System.EventID.Value = 4625  -- Failed logins
-ORDER BY Time DESC
 LIMIT 100
 ```
 
----
+### Step 2c: Collect Logged-on Users
+```sql
+-- VQL: Currently logged-on users
+SELECT Name, Type, Sid, LogonTime
+FROM Artifact.Windows.Sys.LoggedInUsers()
+```
+
+## Task 3: Memory Acquisition
+
+### Step 3a: Via Velociraptor (Recommended)
+```sql
+-- In Velociraptor UI → Collect Artifact:
+-- Search for: Windows.Memory.Acquisition
+
+-- Or run via Velociraptor GUI:
+-- 1. Select your Windows client
+-- 2. Click "Collect" → "Add new collection"
+-- 3. Search: Windows.Memory.Acquisition
+-- 4. Click "Launch"
+-- 5. Wait for collection to complete (~5-15 minutes)
+-- 6. Download the memory image from "Results" tab
+```
+
+### Step 3b: Via WinPmem (Manual Method)
+```powershell
+# Download WinPmem from GitHub:
+# https://github.com/Velocidex/WinPmem/releases
+
+# Run as Administrator in PowerShell:
+cd C:\Tools\winpmem
+
+# Acquire memory to local file:
+.\winpmem_mini_x64_rc2.exe C:\Evidence\memory_dump_SERVER-X.raw
+
+# Expected output:
+# WinPmem 4.0.rc1.
+# Acquiring Memory...
+# Progress: [########################################] 100%
+# Total bytes: 8589934592 (8.0 GB)
+# Completed in 120 seconds.
+```
+
+Evidence Hashing & Chain of Custody
+
+### Step 4a: Hash the collected evidence
+```bash
+# On Linux (Wazuh/analyst workstation):
+
+# Hash memory dump
+sha256sum memory_dump_SERVER-X.raw > memory_dump_SERVER-X.raw.sha256
+cat memory_dump_SERVER-X.raw.sha256
+# Output: a3f2b1c9... memory_dump_SERVER-X.raw
+
+# Hash disk image
+sha256sum disk_image_SERVER-X.E01 > disk_image_SERVER-X.E01.sha256
+
+# Hash CSV collection
+sha256sum netstat_SERVER-X_2026-03-24.csv > netstat_SERVER-X_2026-03-24.csv.sha256
+
+# Verify hash (after copying/transferring):
+sha256sum -c memory_dump_SERVER-X.raw.sha256
+# Output: memory_dump_SERVER-X.raw: OK
+```
+
+```powershell
+# On Windows:
+# Get-FileHash is the equivalent:
+Get-FileHash -Path "C:\Evidence\memory_dump_SERVER-X.raw" -Algorithm SHA256
+
+# Output:
+# Algorithm  Hash                                              Path
+# SHA256     A3F2B1C9...                                       C:\Evidence\memory_dump...
+```
+
+### Document Chain of Custody
+
+```
+CHAIN OF CUSTODY FORM
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Incident ID:       INC-2026-001
+Case Name:         Ransomware — SERVER-X
+Case Number:       CASE-2026-001
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EVIDENCE ITEM 1
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Evidence ID:       EVD-001
+Item Type:         Memory Dump
+Filename:          memory_dump_SERVER-X.raw
+File Size:         8.0 GB (8,589,934,592 bytes)
+SHA256 Hash:       a3f2b1c9d4e5f6789012345678901234567890123456789012345678
+                   90123456 (64 chars)
+MD5 Hash:          a1b2c3d4e5f6789012345678
+
+Source System:
+  Hostname:        SERVER-X
+  IP Address:      10.0.0.30
+  OS:              Windows Server 2019
+  Role:            Production File Server
+
+Collection:
+  Collected By:    [Analyst Name]
+  Method:          WinPmem 4.0.rc1
+  Collection Time: 2026-03-24 10:15:00 UTC
+  Storage Location: /evidence/INC-2026-001/EVD-001/
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CUSTODY LOG
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+| # | Date/Time (UTC)       | From              | To                | Purpose           | Signature |
+|---|-----------------------|-------------------|-------------------|-------------------|-----------|
+| 1 | 2026-03-24 10:15 UTC  | SYSTEM (live)     | SOC Analyst-1     | Initial collection| [sign]    |
+| 2 | 2026-03-24 10:45 UTC  | SOC Analyst-1     | Evidence Storage  | Secured storage   | [sign]    |
+| 3 | 2026-03-24 14:00 UTC  | Evidence Storage  | IR Forensics Team | Deep analysis     | [sign]    |
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EVIDENCE ITEM 2
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Evidence ID:       EVD-002
+Item Type:         Network Connection Export (CSV)
+Filename:          netstat_SERVER-X_2026-03-24.csv
+File Size:         24 KB
+SHA256 Hash:       b5c6d7e8f9012345678901234567890123456789012345678901234567
+                   8901234 (64 chars)
+Collection Time:   2026-03-24 10:10:00 UTC
+Collected By:      [Analyst Name]
+Method:            Velociraptor Windows.Network.Netstat artifact
+```
+
+
 
 ##  Section 2: FTK Imager
 
@@ -175,10 +285,25 @@ FTK Imager is a forensic imaging tool that creates exact bit-for-bit copies of s
 **Step 1:** Launch FTK Imager as **Administrator**
 
 **Step 2:** Go to **File → Capture Memory**
+**step 3:** Select source:
+   - Physical Drive → \\.\PhysicalDrive0
+**Step 4:** Click **Capture Memory** and wait for completion.
+**Step5:**  Add destination:
+   - Image type: E01 (EnCase format, includes verification)
+   - Save to: D:\Evidence\disk_image_SERVER-X.E01
+   - Compression: 6
+   - Fragment size: 4096 MB
+   - Case number: INC-2026-001
+   - Evidence number: EVD-003
+   - Description: SERVER-X Production File Server Disk Image
+**Step 6:** Click Start
+**Step 7:** FTK Imager automatically:
+   - Creates MD5 and SHA1 hashes
+   - Verifies image integrity
+   - Saves verification report
 
-**Step 3:** Click **Capture Memory** and wait for completion.
-
-**Step 4:** Hash the memory dump:
+**Step 8:** Document the verification report:
+**Step 9 :** Hash the memory dump:
 
 ```powershell
 # On Windows (PowerShell)
@@ -279,7 +404,20 @@ Verified At:    2025-08-18 12:25 UTC
 Method:         sha256sum on all files
 Result:          All hashes match — evidence integrity confirmed
 ```
+---
 
+## Lab Completion Checklist
+
+- [ ] Velociraptor server deployed and accessible
+- [ ] Windows agent connected to Velociraptor
+- [ ] netstat collection exported to CSV
+- [ ] Memory dump acquired with WinPmem
+- [ ] SHA256 hash computed and documented
+- [ ] Chain of custody form completed
+- [ ] FTK Imager disk image created (if physical lab)
+- [ ] All evidence items inventoried
+
+---
 ---
 
 ##  Resources
