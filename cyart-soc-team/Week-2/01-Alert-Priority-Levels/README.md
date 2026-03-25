@@ -135,6 +135,76 @@ Step 3: Document the vector string and score in your tracker.
 
 ---
 
+## 3. Alert Assignment Criteria
+
+### Factor 1: Asset Criticality
+```
+Tier 1 (Critical): Production servers, domain controllers, financial systems
+Tier 2 (High):     Staging servers, internal applications, sensitive databases
+Tier 3 (Medium):   Development systems, internal workstations
+Tier 4 (Low):      Test VMs, non-critical endpoints
+```
+
+### Factor 2: Exploit Likelihood
+- Does a public exploit exist? (CVE with known PoC = higher priority)
+- Is it being actively exploited in the wild? (CISA KEV list)
+- Is the target exposed to the internet?
+
+### Factor 3: Business Impact
+- Financial loss potential
+- Data sensitivity (PII, PHI, financial records)
+- Regulatory compliance implications (GDPR, HIPAA, PCI-DSS)
+- Service availability requirements (SLA breaches)
+
+### Priority Decision Matrix
+
+```
+                    HIGH Asset Criticality    LOW Asset Criticality
+HIGH Exploit Risk:     CRITICAL                    HIGH
+LOW  Exploit Risk:     HIGH                        MEDIUM/LOW
+```
+
+---
+
+## 4. SOC Alert Prioritization Workflow
+
+```
+Alert Received
+      │
+      
+Is asset Tier 1 (Critical)?
+      │
+   YES ────────────────────────────────────── - CVSS ≥ 9.0? → CRITICAL
+      │                                         CVSS 7-8.9 → HIGH
+      │
+      NO
+      │
+      |
+Does public exploit exist? - YES - CVSS ≥ 7.0? - HIGH
+                           - NO  - CVSS < 7.0  - MEDIUM/LOW
+```
+
+---
+
+## 5. Practical Exercise
+
+### Task: Prioritize These 5 Alerts
+
+| # | Alert Description | Your Priority | CVSS | Reference |
+|---|-------------------|---------------|------|-----------|
+| 1 | Log4Shell exploit detected on prod web server | _______ | 10.0 | CVE-2021-44228 |
+| 2 | Nmap port scan from external IP | _______ | 2.1 | — |
+| 3 | Unauthorized admin login at 3AM | _______ | 8.8 | — |
+| 4 | Ransomware process detected on finance PC | _______ | 9.8 | — |
+| 5 | SSL certificate expiring in 30 days | _______ | 0.0 | — |
+
+**Answers:** 1=Critical, 2=Low, 3=High, 4=Critical, 5=Low
+
+---
+
+
+
+
 ##  Alert Priority Google Sheets Template
 
 Create this spreadsheet to track and score alerts:
@@ -159,3 +229,7 @@ Google Sheets Formula for Auto-Priority:
 - [NIST NVD CVSS Calculator](https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator)
 - [CISA Log4Shell Advisory](https://www.cisa.gov/news-events/cybersecurity-advisories/aa21-356a)
 - [NIST SP 800-61 Rev 2](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf)
+- [Log4Shell CISA Alert](https://www.cisa.gov/news-events/cybersecurity-advisories/aa21-356a)
+
+---
+
